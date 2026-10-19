@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="id" data-title="Kalkulator Cloud AWS / Google Cloud">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Kalkulator Cloud AWS / Google Cloud</title>
+<style>
+/*__CSS__*/
+</style>
+<script>window.KC_USER = /*__USER__*/null;
+(function () { try { var t = localStorage.getItem('kc_theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); if (localStorage.getItem('kc_sb') === '0' || window.innerWidth < 900) document.documentElement.classList.add('sb-closed'); } catch (e) {} })();</script>
+<script>/*__I18N__*/</script>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar" id="sidebar" aria-label="Menu fitur dan pengaturan">
+  <div class="sb-head">
+    <span class="sb-title">Menu</span>
+    <button class="icon-btn" id="btnSbClose" title="Sembunyikan menu" aria-label="Sembunyikan menu">«</button>
+  </div>
+  <nav class="sb-nav" role="tablist">
+    <div class="sb-group">Fitur</div>
+    <button class="tab active" data-tab="input"><span class="ic">①</span>1. Kebutuhan</button>
+    <button class="tab" data-tab="solusi"><span class="ic">②</span>2. Solusi &amp; Topologi</button>
+    <button class="tab" data-tab="biaya" id="tabBiaya"><span class="ic">③</span>3. Proyeksi Biaya Per Periode</button>
+    <button class="tab" data-tab="tco"><span class="ic">④</span>4. TCO vs On‑Prem</button>
+    <button class="tab" data-tab="catatan"><span class="ic">⑤</span>5. Catatan</button>
+    <button class="tab" data-tab="harga"><span class="ic">⑥</span>6. Data Harga &amp; Update</button>
+    <button class="tab" data-tab="ekspor"><span class="ic">⑦</span>7. Ekspor</button>
+    <button class="tab" data-tab="backup"><span class="ic">⛁</span>Backup &amp; Restore</button>
+    <div class="sb-group">Pengaturan</div>
+    <button class="tab" data-tab="currency"><span class="ic">¤</span>Mata Uang &amp; Kurs</button>
+    <button class="tab" data-tab="settings"><span class="ic">⚙</span>Bahasa &amp; Tampilan</button>
+    <button class="tab" data-tab="account"><span class="ic">☺</span>Akun Saya</button>
+    <!--ADMIN-->
+    <div class="sb-group">Admin</div>
+    <button class="tab" data-tab="users"><span class="ic">›</span>Kelola Pengguna</button>
+    <button class="tab" data-tab="logs"><span class="ic">≡</span>Catatan Aktivitas</button>
+    <!--/ADMIN-->
+  </nav>
+  <div class="sb-foot">
+    <div class="lang-switch" role="group" aria-label="Bahasa">
+      <button data-lang="id" class="on">ID</button><button data-lang="en">EN</button>
+    </div>
+    <div class="sb-user" id="sbUser" data-notr></div>
+  </div>
+</aside>
+<div class="sb-backdrop" id="sbBackdrop"></div>
+
+<div class="main-col">
+<header class="topbar">
+  <div class="brand">
+    <button class="icon-btn menu-btn" id="btnSbToggle" title="Tampilkan / sembunyikan menu" aria-label="Tampilkan / sembunyikan menu">☰</button>
+    <div class="logo" aria-hidden="true"><svg viewBox="0 0 40 40" width="34" height="34"><path d="M12 28h17a7 7 0 0 0 .8-13.95A10 10 0 0 0 10.6 16.2 6 6 0 0 0 12 28z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M15 23h3m3 0h3m-6-3.5h6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+    <div>
+      <h1>Kalkulator Cloud AWS / Google Cloud</h1>
+      <p class="sub">Dari kebutuhan pelanggan → solusi, topologi, biaya sewa (3 bln–3 thn), TCO vs on‑premise</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <span class="pill" id="priceBadge">Data harga: –</span>
+    <span class="pill cur-pill" id="curBadge" title="Mata uang output">IDR</span>
+    <button class="btn ghost" id="btnTopUpdate" title="Ambil harga & katalog terbaru AWS dan Google Cloud">⟳ Update Harga</button>
+    <button class="btn" id="btnRecompute" title="Hitung ulang semua hasil dengan input, harga, dan kurs saat ini">↻ Recompute</button>
+    <button class="btn ghost warn" id="btnResetData" title="Kosongkan hasil dan kembalikan input ke contoh">Reset Data</button>
+    <button class="btn ghost" id="btnLogout" title="Keluar dari aplikasi">⎋ Logout</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ INPUT ============ -->
+<section class="panel active" id="tab-input">
+  <div class="grid2">
+    <fieldset class="card">
+      <legend>Profil Pelanggan</legend>
+      <label>Nama pelanggan <input id="custName" value="PT Contoh Nusantara"></label>
+      <label>Nama proyek <input id="projName" value="Migrasi Aplikasi ke Cloud"></label>
+      <label>Industri / sektor
+        <select id="industry">
+          <option value="umum">Umum / Swasta</option>
+          <option value="keuangan">Perbankan / Keuangan</option>
+          <option value="pemerintah">Pemerintah / BUMN / Sektor publik</option>
+          <option value="kesehatan">Kesehatan</option>
+          <option value="pendidikan">Pendidikan</option>
+          <option value="ritel">Ritel / E-commerce</option>
+          <option value="manufaktur">Manufaktur</option>
+        </select>
+      </label>
+      <label>Disusun untuk (PIC) <input id="picName" value=""></label>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend>Pilihan Cloud &amp; Lokasi</legend>
+      <div class="seg" id="providerSeg">
+        <label><input type="radio" name="provider" value="aws"> AWS</label>
+        <label><input type="radio" name="provider" value="gcp"> Google Cloud</label>
+        <label><input type="radio" name="provider" value="both" checked> Bandingkan keduanya</label>
+      </div>
+      <label>Negara / lokasi pelanggan
+        <select id="regionKey">
+          <option value="jakarta">Indonesia → AWS Jakarta / Google Cloud Jakarta</option>
+          <option value="malaysia">Malaysia → AWS Malaysia / Google Cloud Singapura (terdekat)</option>
+          <option value="singapore">Singapura → AWS Singapura / Google Cloud Singapura</option>
+          <option value="thailand">Thailand → AWS Bangkok / Google Cloud Bangkok</option>
+          <option value="philippines">Filipina → AWS Singapura / Google Cloud Singapura (terdekat)</option>
+          <option value="brunei">Brunei Darussalam → AWS Singapura / Google Cloud Singapura (terdekat)</option>
+          <option value="us">Pembanding: Amerika Serikat → AWS us-east-1 / Google Cloud us-central1</option>
+        </select>
+      </label>
+      <p class="sec-desc" id="regionDesc"></p>
+      <label>Model harga
+        <select id="pricing">
+          <option value="ondemand">On-demand (tanpa komitmen) – proyeksi 12 bulan</option>
+          <option value="3m">Kontrak 3 bulan (on-demand + diskon mitra)</option>
+          <option value="6m">Kontrak 6 bulan (on-demand + diskon mitra)</option>
+          <option value="1y" selected>Komitmen 1 tahun (Savings Plans / CUD)</option>
+          <option value="3y">Komitmen 3 tahun (Savings Plans / CUD)</option>
+        </select>
+      </label>
+      <label>Paket support
+        <select id="support">
+          <option value="Basic">Basic (gratis)</option>
+          <option value="Developer">Developer / Standard</option>
+          <option value="Business" selected>Business / Enhanced</option>
+          <option value="Enterprise">Enterprise / Premium</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend>Beban Kerja (Workload)</legend>
+      <label>Jenis aplikasi
+        <select id="workload">
+          <option value="web">Aplikasi Web / Portal / CMS</option>
+          <option value="ecommerce">E-Commerce / Marketplace</option>
+          <option value="erp">ERP / Aplikasi Bisnis Internal</option>
+          <option value="api">Mobile Backend / API</option>
+          <option value="analytics">Data Analytics / BI / Data Lake</option>
+          <option value="ai">AI / ML Inference (GPU)</option>
+          <option value="fileserver">File Server / Kolaborasi Dokumen</option>
+        </select>
+      </label>
+      <div class="row2">
+        <label>Total pengguna terdaftar <input type="number" id="users" value="20000" min="1"></label>
+        <label>Pengguna bersamaan (peak) <input type="number" id="concurrent" value="1500" min="1"></label>
+      </div>
+      <label>Ketersediaan (SLA)
+        <select id="availability">
+          <option value="standard">Standar – 1 zona (±99,5%)</option>
+          <option value="high" selected>Tinggi – Multi-AZ (±99,95%)</option>
+          <option value="critical">Mission-critical – Multi-AZ + DR region lain</option>
+        </select>
+      </label>
+      <div class="row2">
+        <label>Arsitektur
+          <select id="platform">
+            <option value="vm">Virtual Machine (IaaS)</option>
+            <option value="k8s">Kontainer (Kubernetes terkelola)</option>
+          </select>
+        </label>
+        <label>Sistem operasi
+          <select id="os">
+            <option value="linux">Linux</option>
+            <option value="windows">Windows Server</option>
+          </select>
+        </label>
+      </div>
+      <details class="manual">
+        <summary>Tentukan spesifikasi server manual (opsional)</summary>
+        <label class="chk"><input type="checkbox" id="manualOn"> Gunakan spesifikasi manual (abaikan sizing otomatis)</label>
+        <div class="row3">
+          <label>Jumlah server app <input type="number" id="mNodes" value="2" min="1"></label>
+          <label>vCPU / server <input type="number" id="mVcpu" value="4" min="1"></label>
+          <label>RAM GB / server <input type="number" id="mRam" value="16" min="1"></label>
+        </div>
+        <label>Jumlah node GPU (khusus AI; 0 = otomatis) <input type="number" id="mGpu" value="0" min="0"></label>
+      </details>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend>Database</legend>
+      <label>Engine
+        <select id="dbEngine">
+          <option value="none">Tidak ada database</option>
+          <option value="mysql" selected>MySQL</option>
+          <option value="postgresql">PostgreSQL</option>
+          <option value="sqlserver">Microsoft SQL Server (Standard)</option>
+          <option value="oracle">Oracle (BYOL)</option>
+        </select>
+      </label>
+      <div class="row2">
+        <label>Ukuran data (GB) <input type="number" id="dbSize" value="200" min="0"></label>
+        <label>Retensi backup (hari) <input type="number" id="backupDays" value="14" min="1"></label>
+      </div>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend>Penyimpanan &amp; Data</legend>
+      <div class="row2">
+        <label>Disk per server (GB) <input type="number" id="blockPer" value="100" min="10"></label>
+        <label>Object storage (TB) <input type="number" id="objectTB" value="1" min="0" step="0.1"></label>
+      </div>
+      <div class="row2">
+        <label>Arsip jangka panjang (TB) <input type="number" id="archiveTB" value="2" min="0" step="0.1"></label>
+        <label>Data di-scan analitik (TB/bln) <input type="number" id="dwTB" value="0" min="0" step="0.5"></label>
+      </div>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend>Jaringan &amp; Keamanan</legend>
+      <label>Trafik keluar ke internet (GB/bulan) <input type="number" id="egressGB" value="1500" min="0"></label>
+      <div class="checks">
+        <label class="chk"><input type="checkbox" id="useCDN" checked> CDN untuk konten statis</label>
+        <label class="chk"><input type="checkbox" id="useWAF" checked> Web Application Firewall</label>
+        <label class="chk"><input type="checkbox" id="useVPN"> VPN site-to-site ke kantor</label>
+      </div>
+      <div class="row2">
+        <label>Pertumbuhan beban / bulan (%) <input type="number" id="growth" value="2" min="0" max="30" step="0.5"></label>
+        <label>Periode TCO
+          <select id="tcoYears"><option value="3" selected>3 tahun</option><option value="5">5 tahun</option></select>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend>Mata Uang &amp; Pajak</legend>
+      <div class="row2">
+        <label>Kurs USD → IDR <input type="number" id="fx" value="17870" min="1"></label>
+        <label>Buffer kurs (%) <input type="number" id="fxBuffer" value="3" min="0" step="0.5"></label>
+      </div>
+      <div class="row2">
+        <label>Mata uang output (laporan) <select id="curOut" class="cur-select" data-role="out"></select></label>
+        <label>Mata uang data input <select id="curIn" class="cur-select" data-role="in"></select></label>
+      </div>
+      <div class="row2" style="align-items:end">
+        <label class="chk" style="margin-top:14px"><input type="checkbox" id="includeTax" checked> Tambahkan pajak jasa digital luar negeri sesuai negara</label>
+        <label>Tarif pajak (%) <input type="number" id="taxRate" value="11" min="0" max="30" step="0.5"></label>
+      </div>
+      <span class="hint" id="taxHint" style="margin-left:0"></span>
+      <div id="curSuggest" class="hint" style="margin-left:0"></div>
+      <div class="row-inline" style="align-items:center;margin-top:8px">
+        <button class="btn ghost small" id="btnFx" style="margin-top:0">⟳ Ambil kurs terbaru (online)</button>
+        <button class="btn ghost small" data-goto="currency" style="margin-top:0">Lihat semua kurs</button>
+      </div>
+      <span class="hint" id="fxStatus" style="margin-left:0"></span>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend>Asumsi On-Premise (untuk TCO)</legend>
+      <div class="row2">
+        <label>Harga server 2-socket (<span class="cur-in">Rp</span>) <input type="number" id="op_server_price_idr"></label>
+        <label>Kapasitas server (vCPU/thread) <input type="number" id="op_server_vcpu"></label>
+      </div>
+      <div class="row2">
+        <label>RAM per server (GB) <input type="number" id="op_server_ram_gb"></label>
+        <label>Storage per TB usable (<span class="cur-in">Rp</span>) <input type="number" id="op_storage_per_tb_idr"></label>
+      </div>
+      <div class="row2">
+        <label>Jaringan &amp; firewall (<span class="cur-in">Rp</span>, sekali) <input type="number" id="op_network_security_idr"></label>
+        <label>Colocation per server/bln (<span class="cur-in">Rp</span>) <input type="number" id="op_colo_per_server_month_idr"></label>
+      </div>
+      <div class="row2">
+        <label>Hypervisor per core/thn (<span class="cur-in">Rp</span>) <input type="number" id="op_hypervisor_per_core_year_idr"></label>
+        <label>Bandwidth per Mbps/bln (<span class="cur-in">Rp</span>) <input type="number" id="op_bandwidth_per_mbps_month_idr"></label>
+      </div>
+      <div class="row3">
+        <label>Gaji admin/bln (<span class="cur-in">Rp</span>) <input type="number" id="op_admin_salary_month_idr"></label>
+        <label>FTE on-prem <input type="number" step="0.25" id="op_fte_onprem"></label>
+        <label>FTE cloud <input type="number" step="0.25" id="op_fte_cloud"></label>
+      </div>
+      <div class="row2">
+        <label>Biaya migrasi ke cloud (<span class="cur-in">Rp</span>, sekali) <input type="number" id="op_migration_one_time_idr"></label>
+        <label>Pelatihan tim (<span class="cur-in">Rp</span>, sekali) <input type="number" id="op_training_one_time_idr"></label>
+      </div>
+    </fieldset>
+  </div>
+
+  <h2 class="section-title">Opsi Lanjutan</h2>
+  <p class="section-sub">Aktifkan sesuai kebutuhan pelanggan. Setiap opsi menambah layanan, biaya, topologi, dan catatan pada hasil.</p>
+  <div class="grid2">
+    <fieldset class="card">
+      <legend><span class="opt-badge sec">KEAMANAN</span> Tingkat keamanan</legend>
+      <label>Kebutuhan keamanan
+        <select id="security">
+          <option value="standard">Standar – baseline (IAM, enkripsi, WAF, backup)</option>
+          <option value="enhanced">Ketat – + deteksi ancaman, postur, pemindaian, audit 12 bln</option>
+          <option value="strict">Sangat ketat / teregulasi – + DDoS lanjutan, NGFW, HSM, DLP, SIEM</option>
+        </select>
+      </label>
+      <p class="sec-desc" id="secDesc"></p>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend><span class="opt-badge hyb">HYBRID</span> Koneksi ke DC on-premise</legend>
+      <div class="opt-head"><label class="switch"><input type="checkbox" id="hybridOn"> Aktifkan hybrid cloud</label></div>
+      <div class="dep" data-dep="hybridOn">
+        <label>Jenis koneksi
+          <select id="hybridConn">
+            <option value="vpn">VPN IPsec via internet</option>
+            <option value="partner500">Partner/hosted 500 Mbps (via ISP lokal)</option>
+            <option value="partner1g" selected>Partner/hosted 1 Gbps</option>
+            <option value="dedicated1g">Dedicated 1 Gbps (Direct Connect)</option>
+            <option value="dedicated10g">Dedicated 10 Gbps</option>
+          </select>
+        </label>
+        <label class="chk"><input type="checkbox" id="hybridRedundant" checked> 2 link redundan (disarankan untuk produksi)</label>
+        <div class="row2">
+          <label>Data cloud → on-prem (GB/bln) <input type="number" id="hybridGB" value="2000" min="0"></label>
+          <label>Server tetap di on-prem <input type="number" id="hybridServers" value="10" min="0"></label>
+        </div>
+        <label>Biaya local loop operator per link (<span class="cur-in">Rp</span>/bln) <input type="number" id="op_local_loop_month_idr"></label>
+      </div>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend><span class="opt-badge vid">VIDEO</span> Video streaming</legend>
+      <div class="opt-head"><label class="switch"><input type="checkbox" id="videoOn"> Aktifkan video streaming</label></div>
+      <div class="dep" data-dep="videoOn">
+        <label>Jenis layanan
+          <select id="videoMode">
+            <option value="vod">Video on demand (VOD)</option>
+            <option value="live">Live streaming</option>
+            <option value="both" selected>VOD + live streaming</option>
+          </select>
+        </label>
+        <div class="row3">
+          <label>Konten VOD baru (jam/bln) <input type="number" id="vodHours" value="50" min="0"></label>
+          <label>Channel live <input type="number" id="liveChannels" value="1" min="0"></label>
+          <label>Jam live / hari <input type="number" id="liveHoursDay" value="4" min="0" max="24"></label>
+        </div>
+        <div class="row3">
+          <label>Total jam tonton / bln <input type="number" id="watchHours" value="50000" min="0"></label>
+          <label>Bitrate rata-rata (Mbps) <input type="number" id="videoBitrate" value="3" min="0.3" step="0.5"></label>
+          <label>Penonton puncak <input type="number" id="peakViewers" value="3000" min="0"></label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend><span class="opt-badge ai">AI</span> Fitur AI</legend>
+      <div class="opt-head"><label class="switch"><input type="checkbox" id="aiOn"> Aktifkan fitur AI</label></div>
+      <div class="dep" data-dep="aiOn">
+        <div class="checks">
+          <label class="chk"><input type="checkbox" id="aiLLM" checked> Chatbot / asisten AI generatif</label>
+          <label class="chk"><input type="checkbox" id="aiRAG" checked> RAG atas dokumen internal</label>
+          <label class="chk"><input type="checkbox" id="aiOCR"> OCR / ekstraksi dokumen</label>
+          <label class="chk"><input type="checkbox" id="aiSpeech"> Speech-to-text</label>
+          <label class="chk"><input type="checkbox" id="aiVision"> Analisis gambar</label>
+        </div>
+        <div class="row2">
+          <label>Tier model
+            <select id="aiTier">
+              <option value="eco">Hemat (Nova Lite / Gemini Flash-Lite)</option>
+              <option value="balanced" selected>Seimbang (Nova Pro / Gemini Flash)</option>
+              <option value="premium">Premium (model frontier / Gemini Pro)</option>
+            </select>
+          </label>
+          <label>Permintaan AI / bln <input type="number" id="aiRequests" value="100000" min="0"></label>
+        </div>
+        <div class="row3">
+          <label>Token input / permintaan <input type="number" id="aiInTok" value="2000" min="0"></label>
+          <label>Token output / permintaan <input type="number" id="aiOutTok" value="500" min="0"></label>
+          <label>Dokumen RAG (GB) <input type="number" id="ragGB" value="5" min="0" step="0.5"></label>
+        </div>
+        <div class="row3">
+          <label>Halaman OCR / bln <input type="number" id="ocrPages" value="10000" min="0"></label>
+          <label>Menit audio / bln <input type="number" id="speechMin" value="5000" min="0"></label>
+          <label>Gambar / bln <input type="number" id="visionImages" value="10000" min="0"></label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend><span class="opt-badge mc">MULTI-CLOUD</span> AWS + Google Cloud bersamaan</legend>
+      <div class="opt-head"><label class="switch"><input type="checkbox" id="multiOn"> Hitung skenario multi-cloud</label></div>
+      <div class="dep" data-dep="multiOn">
+        <label>Pola arsitektur
+          <select id="mcPattern">
+            <option value="activepassive">Active-passive – cloud kedua sebagai DR</option>
+            <option value="activeactive">Active-active – beban dibagi di dua cloud</option>
+            <option value="bestofbreed">Best-of-breed – aplikasi di cloud utama, data/AI di cloud kedua</option>
+          </select>
+        </label>
+        <div class="row2">
+          <label>Cloud utama
+            <select id="mcPrimary"><option value="auto">Otomatis (termurah)</option><option value="aws">AWS</option><option value="gcp">Google Cloud</option></select>
+          </label>
+          <label>Koneksi antar cloud
+            <select id="mcLink"><option value="vpn">HA VPN (internet)</option><option value="interconnect">Interkoneksi privat 1 Gbps</option></select>
+          </label>
+        </div>
+        <label>Replikasi data antar cloud (GB/bln) <input type="number" id="mcSyncGB" value="500" min="0"></label>
+        <p class="sec-desc">Hasil multi-cloud tampil sebagai opsi ketiga di samping AWS dan Google Cloud.</p>
+      </div>
+    </fieldset>
+  </div>
+  <div class="cta-row">
+    <button class="btn primary big" id="btnCalc">Hitung Solusi &amp; Biaya →</button>
+    <button class="btn ghost" id="btnResetInput">Reset ke contoh</button>
+  </div>
+</section>
+
+<!-- ============ SOLUSI ============ -->
+<section class="panel" id="tab-solusi"><div id="solusiOut" class="empty">Isi kebutuhan lalu klik <b>Hitung</b>.</div></section>
+<!-- ============ BIAYA ============ -->
+<section class="panel" id="tab-biaya"><div id="biayaOut" class="empty">Belum ada perhitungan.</div></section>
+<!-- ============ TCO ============ -->
+<section class="panel" id="tab-tco"><div id="tcoOut" class="empty">Belum ada perhitungan.</div></section>
+<!-- ============ CATATAN ============ -->
+<section class="panel" id="tab-catatan"><div id="catatanOut" class="empty">Belum ada perhitungan.</div></section>
+
+<!-- ============ HARGA ============ -->
+<section class="panel" id="tab-harga">
+  <div class="card">
+    <h2>Data Harga &amp; Katalog Layanan</h2>
+    <p class="muted" id="priceMeta"></p>
+    <div class="btn-row">
+      <label class="btn">Impor prices.json<input type="file" id="filePrices" accept=".json" hidden></label>
+      <button class="btn ghost" id="btnExportPrices">Ekspor prices.json</button>
+      <button class="btn ghost" id="btnResetPrices">Kembalikan ke harga bawaan</button>
+    </div>
+    <div class="update-box">
+      <h3>Update online otomatis (tanpa skrip, tanpa kredensial)</h3>
+      <p class="muted" style="margin:4px 0 8px">Satu klik mengambil harga & katalog terbaru langsung dari sumber publik: <b>AWS Price List API</b> resmi, <b>daftar harga Google Cloud</b> (pricing.yml yang dibangkitkan harian dari Cloud Billing Catalog API), dan kurs USD→IDR. Butuh koneksi internet.</p>
+      <div class="checks">
+        <label class="chk"><input type="checkbox" id="uAws" checked> AWS</label>
+        <label class="chk"><input type="checkbox" id="uGcp" checked> Google Cloud</label>
+        <label class="chk"><input type="checkbox" id="uFx" checked> Kurs USD→IDR</label>
+        <label class="chk"><input type="checkbox" id="uEc2" checked> Harga instans EC2 (unduhan besar ±650 MB)</label>
+        <label class="chk"><input type="checkbox" id="uCat" checked> Perbarui katalog ke generasi terbaru</label>
+      </div>
+      <div class="row-inline" style="margin-top:10px">
+        <button class="btn" id="btnOnline">⟳ Update Online Sekarang</button>
+        <button class="btn ghost" id="btnOnlineCancel" hidden>Batalkan</button>
+        <span class="hint" id="onlineStatus"></span>
+      </div>
+      <div class="progress" id="onlineProg" hidden><div class="bar" id="onlineBar"></div></div>
+      <pre class="log" id="updateLog" hidden></pre>
+      <div id="onlineChanges"></div>
+      <details style="margin-top:8px"><summary>Alternatif: skrip Python (tools/update_prices.py)</summary>
+        <p class="muted">Untuk otomasi terjadwal di server, jalankan <code>tools/update_prices.py</code> lalu impor <code>prices.json</code> dengan tombol di atas.</p>
+      </details>
+    </div>
+    <p class="muted">Semua sel di bawah bisa diedit langsung. Perubahan tersimpan otomatis di browser ini dan dipakai pada perhitungan berikutnya. Harga dalam USD, basis region US; region lain memakai pengali.</p>
+  </div>
+  <div id="priceEditor"></div>
+</section>
+
+<!-- ============ EKSPOR ============ -->
+<section class="panel" id="tab-ekspor">
+  <div class="card">
+    <h2>Ekspor Laporan</h2>
+    <p class="muted">Laporan memuat profil kebutuhan, solusi, topologi, rincian biaya, proyeksi 12 bulan, TCO, dan catatan. Semua dibuat di browser Anda, tanpa internet.</p>
+    <div class="export-grid">
+      <button class="export-btn" id="btnDocx"><span class="ext docx">DOCX</span><b>Proposal Word</b><small>Dokumen lengkap untuk diedit &amp; dikirim</small></button>
+      <button class="export-btn" id="btnPdf"><span class="ext pdf">PDF</span><b>Laporan PDF</b><small>Siap cetak / lampiran email</small></button>
+      <button class="export-btn" id="btnXlsx"><span class="ext xlsx">XLSX</span><b>Lembar Hitung Excel</b><small>BOM, 12 bulan, TCO dengan rumus</small></button>
+    </div>
+    <p class="hint" id="exportStatus"></p>
+  </div>
+</section>
+
+<!-- ============ BACKUP & RESTORE ============ -->
+<section class="panel" id="tab-backup">
+  <div class="card">
+    <h2>Backup &amp; Restore Data Analisis</h2>
+    <p class="muted">Backup berisi seluruh input kebutuhan, data harga yang dipakai (termasuk hasil update/edit), pengaturan mata uang &amp; kurs, serta bahasa. Hasil perhitungan dibuat ulang otomatis saat data dipulihkan.</p>
+    <div class="grid2">
+      <div class="subcard">
+        <h3>File backup (.json)</h3>
+        <p class="muted">Simpan ke komputer Anda dan pulihkan kapan saja.</p>
+        <div class="btn-row">
+          <button class="btn" id="btnBackupDownload">⬇ Unduh Backup</button>
+          <label class="btn ghost">⬆ Pulihkan dari File<input type="file" id="fileBackup" accept=".json,application/json" hidden></label>
+        </div>
+      </div>
+      <div class="subcard">
+        <h3>Backup di server</h3>
+        <p class="muted">Tersimpan di akun Anda dan bisa dipulihkan dari perangkat lain.</p>
+        <div class="row-inline">
+          <input id="bkName" maxlength="80" placeholder="Nama backup, mis. PT Contoh – revisi 2">
+          <button class="btn" id="btnBackupServer">Simpan ke Server</button>
+        </div>
+      </div>
+    </div>
+    <p class="hint" id="bkStatus" style="margin-left:0"></p>
+    <div id="bkList"></div>
+  </div>
+  <div class="card">
+    <h2>Proyek (input saja)</h2>
+    <p class="muted">Simpan atau muat input kebutuhan saja. Kompatibel dengan file proyek versi sebelumnya.</p>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnSaveProject" title="Simpan input proyek ke file .json">Simpan Proyek</button>
+      <label class="btn ghost" title="Muat file proyek .json">Muat Proyek<input type="file" id="fileProject" accept=".json" hidden></label>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MATA UANG ============ -->
+<section class="panel" id="tab-currency">
+  <div class="card">
+    <h2>Mata Uang &amp; Kurs</h2>
+    <p class="muted">Harga cloud bersumber dalam USD, sedangkan asumsi on-premise mengikuti mata uang data yang Anda masukkan. Pilih mata uang output: seluruh perhitungan, tabel, grafik, dan file ekspor otomatis dikonversi.</p>
+    <div class="row2 narrow">
+      <label>Mata uang output (pemrosesan &amp; laporan) <select id="curOut2" class="cur-select" data-role="out"></select></label>
+      <label>Mata uang data input (asumsi on-premise) <select id="curIn2" class="cur-select" data-role="in"></select></label>
+    </div>
+    <div class="btn-row" style="align-items:center">
+      <button class="btn" id="btnRatesOnline">⟳ Update Kurs Online</button>
+      <button class="btn ghost" id="btnRatesReset">Kembalikan kurs bawaan</button>
+      <span class="hint" id="ratesStatus"></span>
+    </div>
+    <p class="muted" id="ratesMeta"></p>
+    <div id="ratesTable"></div>
+  </div>
+</section>
+
+<!-- ============ PENGATURAN ============ -->
+<section class="panel" id="tab-settings">
+  <div class="card narrow-card">
+    <h2>Bahasa &amp; Tampilan</h2>
+    <label>Bahasa / Language</label>
+    <div class="seg" id="langSeg">
+      <label><input type="radio" name="lang" value="id"> Bahasa Indonesia</label>
+      <label><input type="radio" name="lang" value="en"> English</label>
+    </div>
+    <label>Tema
+      <select id="themeSel">
+        <option value="auto">Otomatis (ikuti sistem)</option>
+        <option value="light">Terang</option>
+        <option value="dark">Gelap</option>
+      </select>
+    </label>
+    <label class="chk" style="margin-top:12px"><input type="checkbox" id="sbPinned"> Tampilkan menu samping saat aplikasi dibuka</label>
+  </div>
+</section>
+
+<!-- ============ AKUN ============ -->
+<section class="panel" id="tab-account">
+  <div class="card narrow-card">
+    <h2>Akun Saya</h2>
+    <div id="accInfo" class="acc-info"></div>
+    <h3>Ganti password</h3>
+    <form id="pwForm" autocomplete="on" onsubmit="return false">
+      <input type="text" name="username" id="pwUser" autocomplete="username" hidden>
+      <label>Password saat ini <input type="password" id="pwCur" autocomplete="current-password" required></label>
+      <label>Password baru <input type="password" id="pwNew" autocomplete="new-password" required></label>
+      <label>Ulangi password baru <input type="password" id="pwNew2" autocomplete="new-password" required></label>
+      <p class="hint" style="margin-left:0">Minimal 8 karakter, mengandung huruf dan angka.</p>
+      <button class="btn" id="btnPwChange" type="submit">Simpan Password Baru</button>
+      <span class="hint" id="pwStatus"></span>
+    </form>
+  </div>
+</section>
+
+<!--ADMIN-->
+<!-- ============ ADMIN: PENGGUNA ============ -->
+<section class="panel" id="tab-users">
+  <div class="card">
+    <div class="card-head">
+      <h2>Kelola Pengguna</h2>
+      <button class="btn" id="btnUserNew">+ Buat Akun Baru</button>
+    </div>
+    <form class="subcard" id="userForm" hidden onsubmit="return false" autocomplete="off">
+      <h3>Akun baru</h3>
+      <div class="row2">
+        <label>Nama lengkap <input id="nuName" maxlength="80" required></label>
+        <label>Username <input id="nuUser" maxlength="32" required autocomplete="off" placeholder="huruf, angka, . _ -"></label>
+      </div>
+      <div class="row2">
+        <label>Password awal
+          <span class="input-btn"><input id="nuPass" maxlength="128" autocomplete="new-password" data-notr><button type="button" class="btn ghost small" id="btnNuRandom">Buat acak</button></span>
+        </label>
+        <label>Peran
+          <select id="nuRole"><option value="user">Pengguna</option><option value="admin">Admin</option></select>
+        </label>
+      </div>
+      <div class="row2">
+        <label>Berlaku mulai <input type="date" id="nuFrom"></label>
+        <label>Berlaku sampai (kosong = tanpa batas) <input type="date" id="nuUntil"></label>
+      </div>
+      <label class="chk"><input type="checkbox" id="nuMust" checked> Wajib ganti password saat login pertama</label>
+      <div class="btn-row">
+        <button class="btn" id="btnNuSave" type="submit">Buat Akun</button>
+        <button class="btn ghost" id="btnNuCancel" type="button">Batal</button>
+        <span class="hint" id="nuStatus"></span>
+      </div>
+    </form>
+    <div class="cred-box" id="userCred" hidden>
+      <div class="card-head"><h3 id="credTitle">Akun berhasil dibuat – kirim informasi ini ke pengguna</h3><button class="icon-btn" id="btnCredClose" title="Tutup">×</button></div>
+      <textarea id="credText" readonly rows="11" data-notr></textarea>
+      <div class="btn-row"><button class="btn" id="btnCredCopy">Salin</button><span class="hint" id="credStatus">Password hanya ditampilkan sekali. Salin sekarang.</span></div>
+    </div>
+    <div class="row-inline" style="margin:12px 0">
+      <input id="userFilter" placeholder="Cari nama / username">
+      <select id="userFilterStatus" style="max-width:200px">
+        <option value="">Semua status</option><option value="active">Aktif</option><option value="inactive">Nonaktif</option><option value="expired">Kedaluwarsa</option><option value="notyet">Belum berlaku</option>
+      </select>
+    </div>
+    <div id="userTable"></div>
+  </div>
+</section>
+
+<!-- ============ ADMIN: LOG ============ -->
+<section class="panel" id="tab-logs">
+  <div class="card">
+    <div class="card-head">
+      <h2>Catatan Aktivitas</h2>
+      <div class="btn-row" style="margin:0"><button class="btn ghost" id="btnLogsRefresh">⟳ Muat Ulang</button><button class="btn ghost" id="btnLogsCsv">Unduh CSV</button></div>
+    </div>
+    <p class="muted">Siapa melakukan apa dan kapan: login, perubahan akun, backup, ekspor, dan aksi penting lainnya (500 catatan terbaru).</p>
+    <div class="row-inline" style="margin:10px 0">
+      <input id="logFilter" placeholder="Filter: pengguna, aksi, detail, IP">
+      <select id="logType" style="max-width:220px">
+        <option value="">Semua jenis</option><option value="auth.">Login &amp; akun</option><option value="admin.">Aksi admin</option><option value="security.">Keamanan</option><option value="backup.">Backup</option><option value="app.">Aktivitas aplikasi</option><option value="currency.">Mata uang</option>
+      </select>
+    </div>
+    <div id="logTable"></div>
+  </div>
+</section>
+<!--/ADMIN-->
+</main>
+
+<footer class="foot">
+  <span>Didisain oleh <b>@letsgobram</b> - <b>@motivaseein</b> (GDB)</span>
+  <span class="muted" id="footMeta"></span>
+</footer>
+</div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+<dialog id="dlg" class="dlg"><form method="dialog" id="dlgForm"><h3 id="dlgTitle"></h3><div id="dlgBody"></div><div class="btn-row dlg-actions"><button class="btn" value="ok" id="dlgOk">OK</button><button class="btn ghost" value="cancel" id="dlgCancel">Batal</button></div></form></dialog>
+
+<script>window.DEFAULT_PRICES = /*__PRICES__*/;</script>
+<script>
+/*__APP__*/
+</script>
+<!--ADMIN--><script>
+/*__ADMIN__*/
+</script><!--/ADMIN-->
+</body>
+</html>
