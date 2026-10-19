@@ -1,0 +1,11 @@
+{
+  "name": "kalkulator-cloud-aws-gcp",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Kalkulator Cloud AWS / Google Cloud – usulan solusi, topologi, biaya & TCO, dengan login, manajemen pengguna, dwibahasa, dan multi mata uang.",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && node dev-server.js"
+  },
+  "engines": { "node": ">=18" }
+}
